@@ -30,4 +30,7 @@ Bu proje, basit bir tarayıcı tabanlı yılan oyununu içerir. Oyun, HTML, CSS 
 ![save-sneak-game](https://github.com/zeystein/save-snake-game/assets/94563035/3a76f639-e0f0-40b8-930b-6ae484e125df)
 
 
+## Youtube Video
+https://youtu.be/XYZlenn1ygk?feature=shared
+
 Geliştirici: [Zeynep Sude Güneş](https://github.com/zeystein)
