@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    canvas {
+        display: block;
+        background-color: #99a66a;
+    }
+    #timer {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 20px;
+        color: #000;
+    }
+</style>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="timer"></div>
+    <script>
+        var canvas = document.getElementById("canvas");
+        var ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth; 
+        canvas.height = window.innerHeight;
+
+        var cisimGenislik = 55;
+        var cisimYukseklik = 55;
+
+        function cisimYap(x, y, width, height, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, 55, 55);
+        }
+
+        var yilan = {
+            x: 0,
+            y: 0,
+            color: "orange"
+        };
+
+        function yilan_Ciz() {
+            ctx.fillStyle = yilan.color;
+            ctx.fillRect(yilan.x, yilan.y, cisimGenislik, cisimYukseklik);
+        }
+
+        var olusan_cisimler = [];
+
+        function cisim_Duzeni(x, y) {
+            for (var j = 0; j < olusan_cisimler.length; j++) {
+                var cisim = olusan_cisimler[j];
+                if (x < cisim.x + cisimGenislik && x + cisimGenislik > cisim.x && y < cisim.y + cisimYukseklik && y + cisimYukseklik > cisim.y) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        var cisim_Renkleri = [];
+
+        var i = 0;
+        while (i < 23) {
+    var rastgele = Math.floor(Math.random() * 8) + 1;
+    var random_x = (Math.random() * (canvas.width - cisimGenislik));
+    var random_y = (Math.random() * (canvas.height - cisimYukseklik)); 
+    i++;
+
+            while (cisim_Duzeni(random_x, random_y)) {
+                random_x = Math.random() * (canvas.width - cisimGenislik);
+                random_y = Math.random() * (canvas.height - cisimYukseklik);
+            }
+
+            var cisim_Renk;
+
+            switch (rastgele) {
+                case 1:
+                    cisim_Renk = "blue";
+                   break;
+                case 2:
+                     cisim_Renk = "red";
+                    break;
+                case 3:
+                     cisim_Renk = "purple";
+                     break;
+                case 4:
+                     cisim_Renk = "gray";
+                     break;
+                 case 5:
+                    cisim_Renk = "green";
+                     break;
+                    case 6:
+                    cisim_Renk = "black";
+                    break;
+                    case 7:
+                    cisim_Renk ="brown";
+                    break;
+                    case 8:
+                    cisim_Renk = "pink";
+                    break;
+                         default:
+                    break;
+        }
+
+            olusan_cisimler.push({ x: random_x, y: random_y, color: cisim_Renk });
+        }
+
+        // Olusan kareler
+        olusan_cisimler.forEach(function(cisim) {
+            cisimYap
+(cisim.x, cisim.y, cisimGenislik, cisimYukseklik, cisim.color);
+        });
+
+        yilan_Ciz();
+        
+        // Zaman fonksiyonu
+        var timeLeft = 30;
+        var timerId = setInterval(function() {
+            document.getElementById("timer").textContent = "Kalan Süre: " + timeLeft + " saniye";
+            timeLeft -= 1;
+            if (timeLeft < 0) {
+                clearInterval(timerId);
+                durdurma(); // Oyunu bitirme fonksiyonu
+            }
+        }, 1000);
+
+        function oyun_Baslat(){
+            window.location.reload();
+        }
+
+
+        function durdurma() {
+            document.removeEventListener("keydown", klavye_Kontrolu);
+            if (confirm("Oyun Bitti! Yeniden başlamak ister misiniz?")) {
+                window.location.reload();
+            }
+        }
+
+        function oyunu_Bitir(){
+            document.removeEventListener("keydown", klavye_Kontrolu);
+            if (confirm("Oyun Tamamlandı! Yeniden başlamak ister misiniz?")) {
+                window.location.reload();
+            }
+        }
+
+        var klavye_Kontrolu = function(event) {
+            var eski_x = yilan.x;
+            var eski_y = yilan.y;
+
+            if (event.key === "ArrowUp") {
+                    yilan.y -= 10;
+            }
+            else if (event.key === "ArrowDown") {
+                    yilan.y += 10;
+            } 
+            else if (event.key === "ArrowLeft") {
+                   yilan.x -= 10;
+            } 
+            else if (event.key === "ArrowRight") {
+                yilan.x += 10;
+            } 
+
+         
+            for (var j = 0; j < olusan_cisimler.length; j++) {
+                var cisim = olusan_cisimler[j];
+                if (yilan.x < cisim.x + cisimGenislik && yilan.x + cisimGenislik > cisim.x && yilan.y < cisim.y + cisimYukseklik && yilan.y + cisimYukseklik > cisim.y) {
+                    durdurma();
+                }
+                else if(yilan.x>=canvas.width-cisimGenislik){
+                    oyunu_Bitir();
+                    oyun_Baslat();
+                
+                }
+            }
+            olusan_cisimler.forEach(function(cisim) {
+                if (cisim.x === eski_x && cisim.y === eski_y) {
+                    cisimYap
+        (cisim.x, cisim.y, cisimGenislik, cisimYukseklik, cisim.color);
+                }
+            });
+
+            cisimYap
+(yilan.x, yilan.y, cisimGenislik, cisimYukseklik, yilan.color);
+        };
+
+        document.addEventListener("keydown", klavye_Kontrolu);
+        
+       
+
+    </script>
+    
+</body>
+</html>
